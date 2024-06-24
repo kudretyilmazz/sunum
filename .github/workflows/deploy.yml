@@ -1,0 +1,20 @@
+name: Publish Test
+on:
+  push:
+    branches:
+      - test
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: test
+    concurrency:
+      group: ${{ github.ref }}
+    steps:
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: cd /root/sunum && git checkout test && git pull && bash start.sh
